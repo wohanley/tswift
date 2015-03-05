@@ -23,11 +23,13 @@ class PackageSpec extends Specification {
 
   "isRhyme" should {
     "return true when syllables rhyme" in {
-      false 
+      isRhyme(Seq('K, 'AH, 'T), Seq('SH, 'AH, 'T))
+      isRhyme(Seq('S, 'N, 'AA, 'T, 'CH), Seq('K, 'AA, 'T, 'CH))
     }
 
     "return false when syllables don't rhyme" in {
-      false
+      !isRhyme(Seq('M, 'AE, 'TH), Seq('M, 'OW, 'TH))
+      !isRhyme(Seq('T, 'R, 'UW, 'TH), Seq('M, 'AW, 'TH))
     }
   }
 }
