@@ -12,6 +12,8 @@ package object nlp {
   def isVowel(phoneme: Phoneme): Boolean =
     vowelPhonemes.contains(phoneme)
 
+  /** Two syllables rhyme if they are the same from the first vowel phoneme
+    * onward. */
   def isRhyme(syll1: Syllable, syll2: Syllable): Boolean =
     syll2.endsWith(syll1.slice(syll1.indexWhere(isVowel), syll1.length))
 }
