@@ -34,4 +34,8 @@ object PronunciationDictionaryParser extends RegexParsers {
   def syllable: Parser[Syllable] = rep(phoneme)
 
   def pronunciation: Parser[Pronunciation] = repsep(syllable, "-")
+
+  def entry: Parser[(Word, Pronunciation)] = word ~ pronunciation ^^ {
+    case w ~ p => (w, p)
+  }
 }
