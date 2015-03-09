@@ -1,5 +1,17 @@
 package object nlp {
 
+  import java.io.FileInputStream
+  import opennlp.tools.tokenize.Tokenizer
+  import opennlp.tools.tokenize.TokenizerME
+  import opennlp.tools.tokenize.TokenizerModel
+
+
+  lazy val englishTokenizer =
+    new TokenizerME(
+      new TokenizerModel(
+        new FileInputStream("en-token.bin")))
+
+
   type Phoneme = Symbol
   type Syllable = Seq[Phoneme]
   type Pronunciation = Seq[Syllable]
@@ -16,4 +28,10 @@ package object nlp {
     * onward. */
   def isRhyme(syll1: Syllable, syll2: Syllable): Boolean =
     syll2.endsWith(syll1.slice(syll1.indexWhere(isVowel), syll1.length))
+
+  def syllabify(tokenizer: Tokenizer)(text: String): Seq[Pronunciation] =
+    tokenizer.tokenize(text)
+      .map(cmudict.pronunciations.get)
+      .flatten
+      .flatMap(_.headOption)
 }
