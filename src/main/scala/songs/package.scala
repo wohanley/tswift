@@ -23,13 +23,14 @@ package object songs {
       val title = SongParser.title.findFirstIn(song)
 
       println(title)
+
       title match {
         case Some(title) => {
-          val verse = SongParser.verse.findFirstIn(song)
-          val chorus = SongParser.chorus.findFirstIn(song)
-
-          rhymes = addSegment(title, rhymes, verse)
-          rhymes = addSegment(title, rhymes, chorus)
+          SongParser.verse.findFirstMatchIn(song).map(verse => {
+            rhymes = addSegment(title, rhymes, verse.group(2))
+          })
+          SongParser.chorus.findFirstMatchIn(song).map(chorus =>
+            rhymes = addSegment(title, rhymes, chorus.group(1)))
         }
         // if the title didn't parse, there's no point adding anything
         case None => {}
@@ -39,21 +40,16 @@ package object songs {
     rhymes
   }
 
-  private def addSegment(title:String,
+  private def addSegment(
+    title:String,
     rhymes: RhymeLookup,
-    segment: Option[String]): RhymeLookup = {
+    segment: String): RhymeLookup = {
     println(segment)
-    segment match {
-      case Some(seg) => {
-        seg.lines.take(2).map(println)
-        rhymes + (seg.lines.take(2)
-          .map(syllabify(nlp.englishTokenizer)_)
-          .map(prons => Line(prons.flatten.length, prons.last.last))
-          .toSeq
-          -> title)
-      }
-      // ignore failures, no big deal
-      case None => rhymes
-    }
+    segment.lines.take(2).map(println)
+    rhymes + (segment.lines.take(2)
+      .map(syllabify(nlp.englishTokenizer)_)
+      .map(prons => Line(prons.flatten.length, prons.last.last))
+      .toSeq
+      -> title)
   }
 }
