@@ -31,7 +31,7 @@ package object nlp {
 
   def syllabify(tokenizer: Tokenizer)(text: String): Seq[Pronunciation] =
     tokenizer.tokenize(text)
-      .map(cmudict.pronunciations.get)
+      .map(token => cmudict.pronunciations.get(token.toUpperCase()))
       .flatten
       .flatMap(_.headOption)
 }
