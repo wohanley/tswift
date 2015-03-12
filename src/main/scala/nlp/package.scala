@@ -27,7 +27,10 @@ package object nlp {
   /** Two syllables rhyme if they are the same from the first vowel phoneme
     * onward. */
   def isRhyme(syll1: Syllable, syll2: Syllable): Boolean =
-    syll2.endsWith(syll1.slice(syll1.indexWhere(isVowel), syll1.length))
+    syll2.endsWith(rhymeSyllable(syll1))
+
+  def rhymeSyllable(syllable: Syllable): Syllable =
+    syllable.slice(syllable.indexWhere(isVowel), syllable.length)
 
   def syllabify(tokenizer: Tokenizer)(text: String): Seq[Pronunciation] =
     tokenizer.tokenize(text)

@@ -94,12 +94,11 @@ object SongParser {
     rhymes: RhymeLookup,
     lines: Seq[String]): RhymeLookup = {
 
-    println("----")
-    lines.take(2).map(println)
-
     rhymes + (lines.take(2)
       .map(nlp.syllabify(nlp.englishTokenizer)_)
-      .map(prons => Line(prons.flatten.length, prons.last.last))
+      .map(prons => Line(
+        prons.flatten.length,
+        nlp.rhymeSyllable(prons.last.last)))
       -> title)
   }
 }
