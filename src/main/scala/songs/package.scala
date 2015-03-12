@@ -34,11 +34,8 @@ package object songs {
     words: Seq[Pronunciation]):
       Line = {
     val lineWords = words.slice(startIndex, endIndex + 1)
-    val line = Line(
+    Line(
       lineWords.map(_.length).sum,
       rhymeSyllable(lineWords.last.last))
-    println(lineWords)
-    println(line)
-    line
   }
 }
