@@ -98,7 +98,7 @@ object SongParser {
       .map(nlp.syllabify(nlp.englishTokenizer)_)
       .map(prons => Line(
         prons.flatten.length,
-        nlp.rhymeSyllable(prons.last.last)))
+        nlp.rhymeSyllable(prons.flatten.last.last)))
       -> title)
   }
 }

@@ -32,9 +32,10 @@ package object nlp {
   def rhymeSyllable(syllable: Syllable): Syllable =
     syllable.slice(syllable.indexWhere(isVowel), syllable.length)
 
-  def syllabify(tokenizer: Tokenizer)(text: String): Seq[Pronunciation] =
+  def syllabify(tokenizer: Tokenizer)(text: String):
+      Seq[Option[Pronunciation]] =
     tokenizer.tokenize(text)
-      .map(token => cmudict.pronunciations.get(token.toUpperCase()))
-      .flatten
-      .flatMap(_.headOption)
+      .map { token =>
+        cmudict.pronunciations.getOrElse(token.toUpperCase(), Set())
+      }.map(_.headOption)
 }

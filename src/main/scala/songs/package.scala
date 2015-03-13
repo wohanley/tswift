@@ -9,33 +9,57 @@ package object songs {
 
   lazy val rhymeLookups: RhymeLookup = SongParser.loadSongs()
 
-  /** Returns the title of a song that matches this text, if one exists. */
-  def songMatch(text: String): Option[String] = {
+  case class SongMatch(title: String, lines: Seq[Line])
+
+  /** Returns a matching song for this text, if one exists. */
+  def songMatch(text: String): Option[SongMatch] = {
     val words = syllabify(englishTokenizer)(text).toSeq
-    println(words)
     if (words.length > 2) {
       (for {
         endIndex1 <- 0 to words.length - 2
         endIndex2 <- endIndex1 + 1 to words.length - 1
       } yield {
-        println(endIndex1 + " and " + endIndex2)
-        rhymeLookups.get(Seq(
+        val lines = Seq(
           line(0, endIndex1, words),
-          line(endIndex1 + 1, endIndex2, words)))
+          line(endIndex1 + 1, endIndex2, words))
+        rhymeLookups.get(lines).map(SongMatch(_, lines))
       }).find(!_.isEmpty).map(_.get)
     }
     else
       None
   }
 
+  def splitToMatchLines(text: String, lines: Seq[Line]): String = {
+    val prons = englishTokenizer.tokenize(text)
+      .zip(syllabify(englishTokenizer)(text))
+
+    var output = ""
+    var currentToken = 0
+    var currentLineSyllables = 0
+    (for (line <- lines) {
+      while (currentLineSyllables < line.syllableCount) {
+        prons.lift(currentToken).map { case (token, pron) =>
+          output = output + token + " "
+          currentToken = currentToken + 1
+          currentLineSyllables =
+            currentLineSyllables + pron.map(_.length).getOrElse(0)
+        }
+      }
+      output = output + '\n'
+      currentLineSyllables = 0
+    })
+
+    output
+  }
+
   private def line(
     startIndex: Int,
     endIndex: Int,
-    words: Seq[Pronunciation]):
+    words: Seq[Option[Pronunciation]]):
       Line = {
     val lineWords = words.slice(startIndex, endIndex + 1)
     Line(
-      lineWords.map(_.length).sum,
-      rhymeSyllable(lineWords.last.last))
+      lineWords.map(_.map(_.length).getOrElse(0)).sum,
+      rhymeSyllable(lineWords.flatten.last.last))
   }
 }
