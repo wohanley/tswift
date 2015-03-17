@@ -22,7 +22,6 @@ package object songs {
         val lines = Seq(
           line(0, endIndex1, words),
           line(endIndex1 + 1, endIndex2, words))
-        println(endIndex1 + " and " + endIndex2 + ": " + lines)
         rhymeLookups.get(lines).map(SongMatch(_, lines))
       }).flatten.headOption
     }
@@ -59,7 +58,6 @@ package object songs {
     words: Seq[Pronunciation]):
       Line = {
     val lineWords = words.slice(startIndex, endIndex + 1)
-    //println(words + " from " + startIndex + " to " + endIndex + ":\n" + lineWords)
     Line(
       lineWords.map(_.length).sum,
       rhymeSyllable(lineWords.last.last))
