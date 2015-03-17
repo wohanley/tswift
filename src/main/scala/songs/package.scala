@@ -15,13 +15,10 @@ package object songs {
   def songMatch(text: String): Option[SongMatch] = {
     val words = syllabify(englishTokenizer)(text).flatten.toSeq
     if (words.length > 2) {
-      (for {
-        endIndex1 <- 0 to words.length - 2
-        endIndex2 <- endIndex1 + 1 to words.length - 1
-      } yield {
+      (for { splitIndex <- 1 to words.length - 1 } yield {
         val lines = Seq(
-          line(0, endIndex1, words),
-          line(endIndex1 + 1, endIndex2, words))
+          line(0, splitIndex, words),
+          line(splitIndex, words.length, words))
         rhymeLookups.get(lines).map(SongMatch(_, lines))
       }).flatten.headOption
     }
@@ -57,7 +54,7 @@ package object songs {
     endIndex: Int,
     words: Seq[Pronunciation]):
       Line = {
-    val lineWords = words.slice(startIndex, endIndex + 1)
+    val lineWords = words.slice(startIndex, endIndex)
     Line(
       lineWords.map(_.length).sum,
       rhymeSyllable(lineWords.last.last))
