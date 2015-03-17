@@ -1,5 +1,7 @@
 package twitter
 
+import scala.None
+import scala.Some
 import songs._
 import twitter4j._
 import scala.util.Properties
@@ -24,10 +26,12 @@ object Bot {
 object HoseListener extends StatusListener {
 
   def onStatus(status: Status): Unit = {
-    songMatch(status.getText()).map { case SongMatch(title, lines) =>
-      println("tune of " + title.toString() + ":\n" +
-        splitToMatchLines(status.getText(), lines).take(140))
-      }
+    songMatch(status.getText()) match {
+      case Some(SongMatch(title, lines)) =>
+        println("tune of " + title.toString() + ":\n" +
+          splitToMatchLines(status.getText(), lines).take(140))
+      case None => println("no match found: " + status.getText())
+    }
   }
 
   // fuck all these
