@@ -1,3 +1,10 @@
+import NativePackagerKeys._
+
+packageArchetype.java_application
+
+name := """tswiftbot"""
+version := "1.0"
+
 scalaVersion := "2.11.5"
 
 // specs2
