@@ -37,7 +37,7 @@ object SongParser {
           rhymes = addSegmentFromSongParts(rhymes, 'chorus, populatedInfo,
             songTitle)
         }
-        case _ => {}p
+        case _ => {}
       }
     }
 
@@ -96,9 +96,11 @@ object SongParser {
 
     rhymes + (lines.take(2)
       .map(nlp.syllabify(nlp.englishTokenizer)_)
-      .map(prons => Line(
-        prons.flatten.length,
-        nlp.rhymeSyllable(prons.flatten.last.last)))
+      .map(prons => {
+        Line(
+          prons.flatten.flatten.length,
+          nlp.rhymeSyllable(prons.flatten.last.last))
+      })
       -> title)
   }
 }

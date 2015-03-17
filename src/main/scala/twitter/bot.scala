@@ -2,15 +2,23 @@ package twitter
 
 import songs._
 import twitter4j._
+import scala.util.Properties
 
 
-class Bot {
+object Bot {
 
   def main(args: Array[String]): Unit = {
-    val text = "You're on the phone with your girlfriend, she's upset\nShe's going off about something that you said"
-    println(songMatch(text).map { case SongMatch(title, lines) =>
-      splitToMatchLines(text, lines)
-    })
+    val stream = new TwitterStreamFactory(new conf.ConfigurationBuilder()
+      .setOAuthConsumerKey(Properties.envOrElse("API_KEY", ""))
+      .setOAuthConsumerSecret(Properties.envOrElse("API_SECRET", ""))
+      .setOAuthAccessToken(Properties.envOrElse("ACCESS_TOKEN", ""))
+      .setOAuthAccessTokenSecret(Properties.envOrElse("ACCESS_TOKEN_SECRET", ""))
+      .build()).getInstance()
+
+    println(Properties.envOrElse("API_KEY", ""))
+
+    stream.addListener(HoseListener)
+    stream.sample()
   }
 }
 
