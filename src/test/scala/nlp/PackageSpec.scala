@@ -32,4 +32,10 @@ class PackageSpec extends Specification {
       !isRhyme(Seq('T, 'R, 'UW, 'TH), Seq('M, 'AW, 'TH))
     }
   }
+
+  "unsplitContractions" should {
+    "combine split contractions" in {
+      Seq("I'd", "never") == unsplitContractions(Seq("I", "'d", "never"))
+    }
+  }
 }

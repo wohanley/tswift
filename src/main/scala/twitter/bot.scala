@@ -20,6 +20,7 @@ object Bot {
     stream.addListener(HoseListener)
     val filter = new FilterQuery()
     filter.language(Array("en"))
+    filter.locations(Array(Array(-180, -90), Array(180, 90)))
     stream.filter(filter)
   }
 }

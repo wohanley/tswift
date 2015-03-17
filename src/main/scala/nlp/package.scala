@@ -32,6 +32,18 @@ package object nlp {
   def rhymeSyllable(syllable: Syllable): Syllable =
     syllable.slice(syllable.indexWhere(isVowel), syllable.length)
 
+  def unsplitContractions(tokens: Seq[String]): Seq[String] =
+    tokens.foldLeft(Seq[String]())((recontracted, token) =>
+      if (token.startsWith("'")) {
+        recontracted.lastOption match {
+          case Some(previousToken) =>
+            recontracted.dropRight(1) :+ (previousToken + token)
+          case None => Seq(token)
+        }
+      } else {
+        recontracted :+ token
+      })
+
   def syllabify(tokenizer: Tokenizer)(text: String):
       Seq[Option[Pronunciation]] =
     tokenizer.tokenize(text)
