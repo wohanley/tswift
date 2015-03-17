@@ -34,10 +34,14 @@ object HoseListener extends StatusListener {
     }
   }
 
+  def onStallWarning(warning: twitter4j.StallWarning): Unit = {
+    println("stall warning: " + warning.getMessage())
+    println(warning.getPercentFull() + "% full")
+  }
+
   // fuck all these
   def onDeletionNotice(x$1: twitter4j.StatusDeletionNotice): Unit = {}
   def onScrubGeo(x$1: Long,x$2: Long): Unit = {}
-  def onStallWarning(x$1: twitter4j.StallWarning): Unit = {}
   def onTrackLimitationNotice(x$1: Int): Unit = {}
   def onException(x$1: Exception): Unit = {}
 }
