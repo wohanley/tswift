@@ -15,8 +15,6 @@ object Bot {
       .setOAuthAccessTokenSecret(Properties.envOrElse("ACCESS_TOKEN_SECRET", ""))
       .build()).getInstance()
 
-    println(Properties.envOrElse("API_KEY", ""))
-
     stream.addListener(HoseListener)
     stream.sample()
   }
@@ -27,8 +25,8 @@ object HoseListener extends StatusListener {
 
   def onStatus(status: Status): Unit = {
     songMatch(status.getText()).map { case SongMatch(title, lines) =>
-      tweet("tune of " + title + ":\n" +
-        splitToMatchLines(status.getText(), lines))
+      println("tune of " + title.toString() + ":\n" +
+        splitToMatchLines(status.getText(), lines).take(140))
       }
   }
 
