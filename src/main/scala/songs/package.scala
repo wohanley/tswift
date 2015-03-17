@@ -64,8 +64,4 @@ package object songs {
       lineWords.map(_.length).sum,
       rhymeSyllable(lineWords.last.last))
   }
-
-//  private def lastWhere[T](predicate: T => Boolean): Option[T] = {
-//    
-//  }
 }
