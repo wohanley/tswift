@@ -13,7 +13,7 @@ package object songs {
 
   /** Returns a matching song for this text, if one exists. */
   def songMatch(text: String): Option[SongMatch] = {
-    val words = syllabify(englishTokenizer)(text).toSeq
+    val words = syllabify(englishTokenizer)(text).flatten.toSeq
     if (words.length > 2) {
       (for {
         endIndex1 <- 0 to words.length - 2
@@ -22,8 +22,9 @@ package object songs {
         val lines = Seq(
           line(0, endIndex1, words),
           line(endIndex1 + 1, endIndex2, words))
+        println(endIndex1 + " and " + endIndex2 + ": " + lines)
         rhymeLookups.get(lines).map(SongMatch(_, lines))
-      }).find(!_.isEmpty).map(_.get)
+      }).flatten.headOption
     }
     else
       None
@@ -55,11 +56,16 @@ package object songs {
   private def line(
     startIndex: Int,
     endIndex: Int,
-    words: Seq[Option[Pronunciation]]):
+    words: Seq[Pronunciation]):
       Line = {
     val lineWords = words.slice(startIndex, endIndex + 1)
+    //println(words + " from " + startIndex + " to " + endIndex + ":\n" + lineWords)
     Line(
-      lineWords.map(_.map(_.length).getOrElse(0)).sum,
-      rhymeSyllable(lineWords.flatten.last.last))
+      lineWords.map(_.length).sum,
+      rhymeSyllable(lineWords.last.last))
   }
+
+//  private def lastWhere[T](predicate: T => Boolean): Option[T] = {
+//    
+//  }
 }

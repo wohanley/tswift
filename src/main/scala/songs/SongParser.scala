@@ -37,7 +37,7 @@ object SongParser {
           rhymes = addSegmentFromSongParts(rhymes, 'chorus, populatedInfo,
             songTitle)
         }
-        case _ => {}
+        case _ => {}p
       }
     }
 
