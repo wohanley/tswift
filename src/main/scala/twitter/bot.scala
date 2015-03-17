@@ -18,7 +18,7 @@ object Bot {
       .build()).getInstance()
 
     stream.addListener(HoseListener)
-    stream.sample()
+    stream.filter(new FilterQuery().language(Array("en")))
   }
 }
 
