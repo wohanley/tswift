@@ -32,21 +32,23 @@ package object nlp {
   def rhymeSyllable(syllable: Syllable): Syllable =
     syllable.slice(syllable.indexWhere(isVowel), syllable.length)
 
-  def unsplitContractions(tokens: Seq[String]): Seq[String] =
-    tokens.foldLeft(Seq[String]())((recontracted, token) =>
-      if (token.startsWith("'")) {
-        recontracted.lastOption match {
+  def appendToken(tokens: Seq[String], token: String): Seq[String] =
+    if (token.startsWith("'")) {
+        tokens.lastOption match {
           case Some(previousToken) =>
-            recontracted.dropRight(1) :+ (previousToken + token)
+            tokens.dropRight(1) :+ (previousToken + token)
           case None => Seq(token)
         }
       } else {
-        recontracted :+ token
-      })
+        tokens :+ token
+      }
+
+  def unsplitContractions(tokens: Seq[String]): Seq[String] =
+    tokens.foldLeft(Seq[String]())(appendToken)
 
   def syllabify(tokenizer: Tokenizer)(text: String):
       Seq[Option[Pronunciation]] =
-    tokenizer.tokenize(text)
+    unsplitContractions(tokenizer.tokenize(text))
       .map { token =>
         cmudict.pronunciations.getOrElse(token.toUpperCase(), Set())
       }.map(_.headOption)
