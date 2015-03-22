@@ -45,9 +45,9 @@ object Bot {
         case SongMatch(title, lines) => {
           tweet(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
             splitToMatchLines(status.getText().take(130), lines))
-          stream.cleanUp()
-          stream.shutdown()
-          timer.schedule(ListenToHose, 10000)
+//          stream.cleanUp()
+//          stream.shutdown()
+//          timer.schedule(ListenToHose, 10000)
         }
       }
     }
