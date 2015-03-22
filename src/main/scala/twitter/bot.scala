@@ -26,8 +26,9 @@ object Bot {
     filter.locations(Array(Array(-180, -90), Array(180, 90)))
     filter.filterLevel("low")
 
-    ListenToHose.run()
-    timer.schedule(ListenToHose, 300)
+//    ListenToHose.run()
+//    timer.schedule(ListenToHose, 10000)
+    stream.filter(filter)
   }
 
   object ListenToHose extends TimerTask {
@@ -42,11 +43,11 @@ object Bot {
     def onStatus(status: Status): Unit = {
       songMatch(status.getText()).map {
         case SongMatch(title, lines) => {
-          println(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
+          tweet(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
             splitToMatchLines(status.getText().take(130), lines))
           stream.cleanUp()
           stream.shutdown()
-          timer.schedule(ListenToHose, 300)
+          timer.schedule(ListenToHose, 10000)
         }
       }
     }
