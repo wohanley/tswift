@@ -32,24 +32,46 @@ package object nlp {
   def rhymeSyllable(syllable: Syllable): Syllable =
     syllable.slice(syllable.indexWhere(isVowel), syllable.length)
 
-  def appendToken(tokens: Seq[String], token: String): Seq[String] =
-    if (token.startsWith("'")) {
-        tokens.lastOption match {
-          case Some(previousToken) =>
-            tokens.dropRight(1) :+ (previousToken + token)
-          case None => Seq(token)
-        }
-      } else {
-        tokens :+ token
-      }
+  def appendToken(tokens: Seq[String], token: String): Seq[String] = {
 
-  def unsplitContractions(tokens: Seq[String]): Seq[String] =
+    val backwardMergingTokens = """('.*)|(n't)|[!?.,:]|(st)|(nd)|(rd)|(th)""".r
+    val secondRequiresMerge = token match {
+      case backwardMergingTokens(_*) => true
+      case _ => false
+    }
+    val firstRequiresMerge = tokens.lastOption match {
+      case Some(previousToken) => previousToken == "#"
+      case None => false
+    }
+
+    if (secondRequiresMerge) {
+      tokens.lastOption match {
+        case Some(previousToken) =>
+          tokens.dropRight(1) :+ (previousToken + token)
+        case None => Seq(token)
+      }
+    } else if (firstRequiresMerge) {
+      tokens.dropRight(1) :+ (tokens.head + token)
+    } else {
+      tokens :+ token
+    }
+  }
+
+  def mergeTokens(tokens: Seq[String]): Seq[String] =
     tokens.foldLeft(Seq[String]())(appendToken)
 
   def syllabify(tokenizer: Tokenizer)(text: String):
-      Seq[Option[Pronunciation]] =
-    unsplitContractions(tokenizer.tokenize(text))
+      Seq[Option[Pronunciation]] = syllabify(tokenizer.tokenize(text))
+
+  def syllabify(tokens: Seq[String]): Seq[Option[Pronunciation]] = {
+    mergeTokens(tokens)
       .map { token =>
         cmudict.pronunciations.getOrElse(token.toUpperCase(), Set())
-      }.map(_.headOption)
+    }.map(_.headOption)
+  }
+
+  def withPronunciations(tokens: Seq[String]):
+      Seq[(String, Option[Pronunciation])] = {
+    mergeTokens(tokens).zip(syllabify(tokens))
+  }
 }

@@ -33,9 +33,9 @@ class PackageSpec extends Specification {
     }
   }
 
-  "unsplitContractions" should {
+  "mergeTokens" should {
     "combine split contractions" in {
-      Seq("I'd", "never") == unsplitContractions(Seq("I", "'d", "never"))
+      Seq("I'd", "never") == mergeTokens(Seq("I", "'d", "never"))
     }
   }
 }

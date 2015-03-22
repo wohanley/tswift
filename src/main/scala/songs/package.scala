@@ -13,7 +13,19 @@ package object songs {
 
   /** Returns a matching song for this text, if one exists. */
   def songMatch(text: String): Option[SongMatch] = {
-    val words = syllabify(englishTokenizer)(text).flatten.toSeq
+    val withProns = withPronunciations(englishTokenizer.tokenize(text))
+    /* See if there are any words that we couldn't find pronunciations for.
+     * If there are, we can't match this text to a song. */
+    val wordsMatch = """[a-zA-Z]""".r.unanchored
+    if (!withProns.find {
+      case (token, None) => token match {
+        case wordsMatch(_*) => true
+        case _ => false
+      }
+      case _ => false
+    }.isEmpty) return None
+
+    val words = syllabify(englishTokenizer)(text).flatten
     if (words.length > 2) {
       (for { splitIndex <- 1 to words.length - 1 } yield {
         val lines = Seq(
@@ -27,26 +39,26 @@ package object songs {
   }
 
   def splitToMatchLines(text: String, lines: Seq[Line]): String = {
-    val prons = englishTokenizer.tokenize(text)
+    val prons = mergeTokens(englishTokenizer.tokenize(text))
       .zip(syllabify(englishTokenizer)(text))
 
-    var output = ""
+    var output = Seq[String]()
     var currentToken = 0
     var currentLineSyllables = 0
     (for (line <- lines) {
       while (currentLineSyllables < line.syllableCount) {
         prons.lift(currentToken).map { case (token, pron) =>
-          output = output + token + " "
+          output = appendToken(output, token)
           currentToken = currentToken + 1
           currentLineSyllables =
             currentLineSyllables + pron.map(_.length).getOrElse(0)
         }
       }
-      output = output + '\n'
+      output = appendToken(output, "\n")
       currentLineSyllables = 0
     })
 
-    output
+    output.mkString(" ")
   }
 
   private def line(

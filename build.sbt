@@ -17,4 +17,5 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % 
 
 libraryDependencies += "org.apache.opennlp" % "opennlp-tools" % "1.5.3"
 
-libraryDependencies +=  "org.twitter4j" % "twitter4j-stream" % "3.0.5"
+// this is local now
+//libraryDependencies +=  "org.twitter4j" % "twitter4j-stream" % "3.0.5"

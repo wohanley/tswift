@@ -12,11 +12,11 @@ import scala.util.matching.Regex
 
 object SongParser {
 
-  def title: Regex = """(?m)(?i)title: (.+)""".r
+  val title: Regex = """(?m)(?i)title: (.+)""".r
 
-  def chorusLabel: Regex = """(?m)(?i)\[chorus:?\]""".r
+  val chorusLabel: Regex = """(?m)(?i)\[chorus:?\]""".r
 
-  def verseLabel: Regex = """(?m)(?i)\[.*\]""".r
+  val verseLabel: Regex = """(?m)(?i)\[.*\]""".r
 
   def loadSongs(): Map[Seq[Line], String] = {
 
@@ -27,8 +27,8 @@ object SongParser {
 
     while (scanner.hasNext()) {
       val song = scanner.next()
-      title.findFirstIn(song) match {
-        case Some(songTitle) => {
+      song match {
+        case title.unanchored(songTitle) => {
           val startInfo: SongParts = new HashMap[Symbol, Seq[String]]
           val populatedInfo = song.split("""\n(\s*\n)+""")
             .foldLeft(startInfo)((info, chunk) => parseChunk(info, chunk))

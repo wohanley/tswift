@@ -26,4 +26,8 @@ package object twitter {
       }
     }
   }
+
+  def tweetUrl(status: Status): String =
+    "https://twitter.com/" + status.getUser().getScreenName() + "/status/" +
+      status.getId()
 }
