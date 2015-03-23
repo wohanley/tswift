@@ -46,7 +46,7 @@ object Bot {
             tweet(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
               splitToMatchLines(status.getText().take(130), lines))
             listening = false
-            timer.schedule(new ListenToHose, 600000)
+            timer.schedule(new ListenToHose, 3600000)
           }
         }
       }
