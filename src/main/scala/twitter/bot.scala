@@ -13,33 +13,27 @@ object Bot {
 
   val timer = new Timer()
   val filter = new FilterQuery()
-  var stream: TwitterStream = null
-
-  def main(args: Array[String]): Unit = {
-    ListenToHose.run()
-    timer.schedule(ListenToHose, 300000)
-  }
-
-  private def newStream(): TwitterStream = {
-    stream = new TwitterStreamFactory(new conf.ConfigurationBuilder()
+  val stream = new TwitterStreamFactory(new conf.ConfigurationBuilder()
     .setOAuthConsumerKey(Properties.envOrElse("API_KEY", ""))
     .setOAuthConsumerSecret(Properties.envOrElse("API_SECRET", ""))
     .setOAuthAccessToken(Properties.envOrElse("ACCESS_TOKEN", ""))
     .setOAuthAccessTokenSecret(Properties.envOrElse("ACCESS_TOKEN_SECRET", ""))
-      .build()).getInstance()
+    .build()).getInstance()
 
+  def main(args: Array[String]): Unit = {
     stream.addListener(HoseListener)
     filter.language(Array("en"))
     filter.locations(Array(Array(-180, -90), Array(180, 90)))
     filter.filterLevel("low")
 
-    stream
+    ListenToHose.run()
+    timer.schedule(ListenToHose, 300000)
+    stream.filter(filter)
   }
 
   object ListenToHose extends TimerTask {
 
     def run(): Unit = {
-      stream = newStream()
       stream.filter(filter)
     }
   }
