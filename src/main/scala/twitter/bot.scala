@@ -26,8 +26,8 @@ object Bot {
     filter.locations(Array(Array(-180, -90), Array(180, 90)))
     filter.filterLevel("low")
 
-//    ListenToHose.run()
-//    timer.schedule(ListenToHose, 10000)
+    ListenToHose.run()
+    timer.schedule(ListenToHose, 300000)
     stream.filter(filter)
   }
 
@@ -45,9 +45,9 @@ object Bot {
         case SongMatch(title, lines) => {
           tweet(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
             splitToMatchLines(status.getText().take(130), lines))
-//          stream.cleanUp()
-//          stream.shutdown()
-//          timer.schedule(ListenToHose, 10000)
+          stream.cleanUp()
+          stream.shutdown()
+          timer.schedule(ListenToHose, 300000)
         }
       }
     }
