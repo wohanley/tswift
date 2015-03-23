@@ -19,6 +19,7 @@ object Bot {
     .setOAuthAccessToken(Properties.envOrElse("ACCESS_TOKEN", ""))
     .setOAuthAccessTokenSecret(Properties.envOrElse("ACCESS_TOKEN_SECRET", ""))
     .build()).getInstance()
+  var listening = false
 
   def main(args: Array[String]): Unit = {
     stream.addListener(HoseListener)
@@ -27,27 +28,27 @@ object Bot {
     filter.filterLevel("low")
 
     ListenToHose.run()
-    timer.schedule(ListenToHose, 300000)
     stream.filter(filter)
   }
 
   object ListenToHose extends TimerTask {
 
     def run(): Unit = {
-      stream.filter(filter)
+      listening = true
     }
   }
 
   object HoseListener extends StatusListener {
 
     def onStatus(status: Status): Unit = {
-      songMatch(status.getText()).map {
-        case SongMatch(title, lines) => {
-          tweet(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
-            splitToMatchLines(status.getText().take(130), lines))
-          stream.cleanUp()
-          stream.shutdown()
-          timer.schedule(ListenToHose, 300000)
+      if (listening) {
+        songMatch(status.getText()).map {
+          case SongMatch(title, lines) => {
+            tweet(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
+              splitToMatchLines(status.getText().take(130), lines))
+            listening = false
+            timer.schedule(ListenToHose, 300000)
+          }
         }
       }
     }
