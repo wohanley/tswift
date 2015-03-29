@@ -44,7 +44,7 @@ object Bot {
         songMatch(status.getText()).map {
           case SongMatch(title, lines) => {
             tweet(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
-              splitToMatchLines(status.getText().take(130), lines))
+              splitToMatchLines(status.getText(), lines))
             listening = false
             timer.schedule(new ListenToHose, 3600000)
           }
