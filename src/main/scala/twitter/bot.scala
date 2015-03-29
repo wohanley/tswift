@@ -48,7 +48,7 @@ object Bot {
               splitToMatchLines(status.getText(), lines)).take(140)
             tweet(new StatusUpdate(tweetText).inReplyToStatusId(status.getId()))
             listening = false
-            timer.schedule(new ListenToHose, 3600000)
+            timer.schedule(new ListenToHose, 600000)
           }
         }
       }
