@@ -43,12 +43,10 @@ object Bot {
       if (listening) {
         songMatch(status.getText()).map {
           case SongMatch(title, lines) => {
-            val tweetText = (".@" + status.getUser().getScreenName() +
-              " tune of " + title.toString() + ":\n" +
-              splitToMatchLines(status.getText(), lines)).take(140)
-            tweet(new StatusUpdate(tweetText).inReplyToStatusId(status.getId()))
+            tweet(tweetUrl(status) + " tune of " + title.toString() + ":\n" +
+              splitToMatchLines(status.getText().take(130), lines))
             listening = false
-            timer.schedule(new ListenToHose, 600000)
+            timer.schedule(new ListenToHose, 3600000)
           }
         }
       }

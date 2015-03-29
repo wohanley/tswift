@@ -6,7 +6,7 @@ package object twitter {
   import util.Properties
   import twitter4j._
 
-  def tweet(update: StatusUpdate) {
+  def tweet(text: String) {
 
     val twitterConfig = new twitter4j.conf.ConfigurationBuilder()
       .setOAuthConsumerKey(Properties.envOrElse("API_KEY", ""))
@@ -16,10 +16,11 @@ package object twitter {
       .build()
 
     val twitter = new TwitterFactory(twitterConfig).getInstance()
-    Try(twitter.updateStatus(update)) match {
+    val tweet = text.take(140)
+    Try(twitter.updateStatus(tweet)) match {
       case Success(_) => Unit
       case Failure(error) => {
-        println("Failed to tweet: " + update)
+        println("Failed to tweet: " + tweet)
         println("Tried with config: " + twitterConfig)
         println("Error reported: " + error)
       }
